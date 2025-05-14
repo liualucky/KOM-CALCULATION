@@ -1,310 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>KO Drum 計算器</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0fbff;
-      padding: 20px;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      max-width: 500px;
-      margin: auto;
-      background: #e0f7ff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #ccc;
-    }
-    .input-group {
-      margin-bottom: 15px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
-    }
-    input {
-      width: 100%;
-      padding: 8px;
-      font-size: 1em;
-    }
-    .output {
-      margin-top: 20px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .output-details {
-      margin-top: 10px;
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 5px;
-      border: 1px solid #ddd;
-    }
-    .output-details p {
-      margin: 5px 0;
-    }
-    .formula-section {
-      margin-top: 20px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .formula-section h3 {
-      color: #0077aa;
-      margin-top: 0;
-    }
-    .formula {
-      background: #f8f9fa;
-      padding: 10px;
-      border-radius: 4px;
-      margin: 10px 0;
-      font-family: monospace;
-    }
-    button {
-      padding: 10px;
-      font-size: 1em;
-      background: #0077aa;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #005577;
-    }
-    .api521-output {
-      margin-top: 20px;
-      background: #ffffe0;
-      padding: 18px;
-      border-radius: 8px;
-      border: 2px solid #b3b300;
-      font-size: 1.1em;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .api521-output label {
-      font-weight: bold;
-      margin-right: 8px;
-    }
-    .api521-output .api-row {
-      margin-bottom: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>SH3009-2013 分液罐規格計算工具</title>
+<style>
+body {
+    font-family: Arial, "Microsoft JhengHei", sans-serif;
+    padding: 20px;
+}
+h1 { color: #333; }
+.input-area, .output-area {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+.input-area { background-color: #fffbcc; } /* 輸入區背景色 (淺黃) */
+.output-area { background-color: #ffdede; } /* 輸出區背景色 (淺紅) */
+table { border-collapse: collapse; width: 100%; }
+td { padding: 5px; vertical-align: middle; }
+.label { width: 200px; }
+input { width: 100%; padding: 5px; box-sizing: border-box; }
+.input-area input { background-color: #ffffcc; }  /* 輸入欄位背景色 (黃色) */
+.output-area input[readonly] { background-color: #ffcccc; } /* 輸出欄位背景色 (粉紅) */
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>KO Drum 自動計算器</h2>
 
-    <div class="input-group">
-      <label>氣體流量 (kg/h)</label>
-      <input type="number" id="W" value="687500">
-    </div>
+<h1>分液罐工藝參數計算工具 (SH3009-2013)</h1>
 
-    <div class="input-group">
-      <label>KO Drum 直徑 (m)</label>
-      <input type="number" id="Di" value="4">
-    </div>
+<div class="input-area">
+  <h2>輸入區域 (黃色)</h2>
+  <table>
+    <tr><td class="label">操作溫度 T (°C)：</td><td><input type="number" id="T_c" value="75.74" step="any"></td></tr>
+    <tr><td class="label">操作壓力 P (KPa，絕壓)：</td><td><input type="number" id="P" value="150" step="any"></td></tr>
+    <tr><td class="label">氣體流量 Q (t/h)：</td><td><input type="number" id="Q" value="65" step="any"></td></tr>
+    <tr><td class="label">氣體分子量 M：</td><td><input type="number" id="M" value="54.1" step="any"></td></tr>
+    <tr><td class="label">液滴直徑 d<sub>1</sub> (m)：</td><td><input type="number" id="d1" value="0.0006" step="any"></td></tr>
+    <tr><td class="label">液滴密度 ρ<sub>l</sub> (kg/m³)：</td><td><input type="number" id="rho_l" value="650" step="any"></td></tr>
+    <tr><td class="label">阻力係數 C：</td><td><input type="number" id="C" value="0.7" step="any"></td></tr>
+    <tr><td class="label">入口數 (個)：</td><td><input type="number" id="N" value="1" step="1"></td></tr>
+  </table>
+  <button onclick="calculate()">計算</button>
+</div>
 
-    <div class="input-group">
-      <label>KO Drum 長度 (m)</label>
-      <input type="number" id="L" value="9.5">
-    </div>
+<div class="output-area">
+  <h2>輸出區域 (紅色)</h2>
+  <table>
+    <tr><td class="label">進出口管徑 (m)：</td><td><input type="text" id="pipeDiameter" readonly></td></tr>
+    <tr><td class="label">端板長度 (m)：</td><td><input type="text" id="endPlate" readonly></td></tr>
+    <tr><td class="label">罐體總長 (m)：</td><td><input type="text" id="tankLength" readonly></td></tr>
+    <tr><td class="label">分液罐直徑 D (m)：</td><td><input type="text" id="Dw_out" readonly></td></tr>
+  </table>
+</div>
 
-    <div class="input-group">
-      <label>液體持液深度 (m)</label>
-      <input type="number" id="hl" value="2">
-    </div>
+<script>
+// 計算功能函數
+function calculate() {
+    // 讀取輸入值
+    var T_c = parseFloat(document.getElementById('T_c').value);
+    var P = parseFloat(document.getElementById('P').value);
+    var Q = parseFloat(document.getElementById('Q').value);
+    var M = parseFloat(document.getElementById('M').value);
+    var d1 = parseFloat(document.getElementById('d1').value);
+    var rho_l = parseFloat(document.getElementById('rho_l').value);
+    var C = parseFloat(document.getElementById('C').value);
+    var N = parseFloat(document.getElementById('N').value);
 
-    <div class="input-group">
-      <label>液滴直徑 (微米)</label>
-      <input type="number" id="d" value="600">
-    </div>
+    // 基本常數和參數（依Excel公式轉換）
+    var T_K = T_c + 273.0; // 絕對溫度 (K)
+    var u = 0.01022 + 0.001 * (T_c / 34.0); // 氣體動力黏度 (Cp)
+    // 氣體密度 ρv (kg/m³)
+    var rho_v = 1000 * M * P / (8314.0 * T_K);
+    // C(Re)^2
+    var Cre2 = 1.307e7 * Math.pow(d1,3) * rho_v * (rho_l - rho_v) / (u * u);
+    // 液滴沉降速度 Uc (m/s)
+    var Uc = 1.15 * Math.sqrt(9.81 * d1 * (rho_l - rho_v) / (rho_v * C));
 
-    <div class="input-group">
-      <label>液體密度 (kg/m³)</label>
-      <input type="number" id="rhoL" value="950">
-    </div>
+    // 分液罐直徑 Dw (m) 為常數 (Excel紅色欄位)
+    var Dw = 1.5;
+    // 液面高度 H = Dw/3
+    var H = Dw / 3.0;
+    // K0 = 1 - 2*D/H (此處 D 為液面高度 H)
+    var K0 = 1 - 2 * H / Dw;
+    // 計算 F21 (依Excel公式)
+    var F21 = (Math.acos(K0) / Math.PI) - (K0 / Math.PI) * Math.sqrt(1 - K0 * K0);
+    // 常數 G23 = 2.5
+    var G23 = 2.5;
+    // 計算 I23, J23, K23 (依Excel公式)
+    var I23 = G23 * Dw;
+    var J23 = 0.6; 
+    var K23 = I23 + J23 * 2;
+    // 計算輸出量
+    var pipeDiameter = H;                    // 進出口管徑 (Dw/3)
+    var endPlate = K23;                      // 端板長度 (I23+2*J23)
+    var tankLength = K23 + Dw / 2.0;         // 罐體總長 (K23 + Dw/2)
 
-    <div class="input-group">
-      <label>氣體密度 (kg/m³)</label>
-      <input type="number" id="rhoV" value="3.4">
-    </div>
+    // 顯示輸出值 (格式化結果)
+    document.getElementById('pipeDiameter').value = parseFloat(pipeDiameter.toFixed(4));
+    document.getElementById('endPlate').value = parseFloat(endPlate.toFixed(4));
+    document.getElementById('tankLength').value = parseFloat(tankLength.toFixed(4));
+    document.getElementById('Dw_out').value = parseFloat(Dw.toFixed(4));
+}
+</script>
 
-    <div class="input-group">
-      <label>氣體黏度 (cp)</label>
-      <input type="number" id="mu" value="0.00745">
-    </div>
-
-    <div class="input-group">
-      <label>阻力係數 C</label>
-      <input type="number" id="C" value="0.6">
-    </div>
-
-    <button onclick="calculate()">計算</button>
-
-    <div class="output" id="result">
-      👉 請輸入資料並按下「計算」
-    </div>
-    <div class="output-details" id="detailed-result">
-    </div>
-    <div class="formula-section">
-      <h3>📐 API 計算公式說明</h3>
-      <div class="formula">
-        <p><strong>1. 終端速度 (Vt) 計算：</strong></p>
-        <p>Vt = √[(4 × d × (ρL - ρV) × g) / (3 × C × ρV)]</p>
-        <p>其中：</p>
-        <ul>
-          <li>d = 液滴直徑 (m)</li>
-          <li>ρL = 液體密度 (kg/m³)</li>
-          <li>ρV = 氣體密度 (kg/m³)</li>
-          <li>g = 重力加速度 (9.81 m/s²)</li>
-          <li>C = 阻力係數 (通常取 0.6)</li>
-        </ul>
-      </div>
-
-      <div class="formula">
-        <p><strong>2. 截面積 (A) 計算：</strong></p>
-        <p>A = π × (Di/2)²</p>
-        <p>其中：</p>
-        <ul>
-          <li>Di = KO Drum 直徑 (m)</li>
-        </ul>
-      </div>
-
-      <div class="formula">
-        <p><strong>3. 氣體流速 (Vg) 計算：</strong></p>
-        <p>Vg = W / (3600 × ρV × A)</p>
-        <p>其中：</p>
-        <ul>
-          <li>W = 氣體流量 (kg/h)</li>
-          <li>ρV = 氣體密度 (kg/m³)</li>
-          <li>A = 截面積 (m²)</li>
-        </ul>
-      </div>
-
-      <div class="formula">
-        <p><strong>4. 停留時間 (t) 計算：</strong></p>
-        <p>t = L / Vg</p>
-        <p>其中：</p>
-        <ul>
-          <li>L = KO Drum 長度 (m)</li>
-          <li>Vg = 氣體流速 (m/s)</li>
-        </ul>
-      </div>
-
-      <div class="formula">
-        <p><strong>5. API 設計準則：</strong></p>
-        <ul>
-          <li>氣體流速應小於終端速度的 75%</li>
-          <li>最小停留時間應大於 3 秒</li>
-          <li>液體持液深度應小於直徑的 50%</li>
-        </ul>
-      </div>
-    </div>
-    <div class="api521-output" id="api521-output">
-      <div class="api-row"><label>液滴沉降時間 Θ：</label><span id="api-theta">-</span> 秒</div>
-      <div class="api-row"><label>氣體流速 Uv：</label><span id="api-uv">-</span> m/s</div>
-      <div class="api-row"><label>所需KO Drum長度 Lmin：</label><span id="api-lmin">-</span> m</div>
-      <div class="api-row"><label>液體持液體積 Vl：</label><span id="api-vl">-</span> m³</div>
-      <div class="api-row"><label>顆粒沉降速度 Uc：</label><span id="api-uc">-</span> m/s</div>
-      <div style="margin-top:24px; text-align:center;">
-        <svg id="drum-svg" width="420" height="180" viewBox="0 0 420 180">
-          <!-- Drum body -->
-          <ellipse cx="210" cy="90" rx="180" ry="70" fill="#e0f7ff" stroke="#0077aa" stroke-width="3" />
-          <!-- Liquid level -->
-          <rect x="30" y="110" width="360" height="50" fill="#b3e0ff" stroke="#0077aa" stroke-width="1" />
-          <!-- Inlet -->
-          <rect x="60" y="30" width="30" height="30" fill="#ccc" stroke="#888" stroke-width="2" />
-          <polygon points="90,45 120,45 120,60 90,60" fill="#ccc" stroke="#888" stroke-width="2" />
-          <text x="65" y="28" font-size="13" fill="#0077aa">氣體入口</text>
-          <!-- Outlet -->
-          <rect x="330" y="30" width="30" height="30" fill="#ccc" stroke="#888" stroke-width="2" />
-          <polygon points="330,45 300,45 300,60 330,60" fill="#ccc" stroke="#888" stroke-width="2" />
-          <text x="325" y="28" font-size="13" fill="#0077aa">氣體出口</text>
-          <!-- D (直徑) 標註 -->
-          <line x1="30" y1="90" x2="390" y2="90" stroke="#f00" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)" />
-          <text x="200" y="80" font-size="13" fill="#f00">D</text>
-          <!-- L (長度) 標註 -->
-          <line x1="210" y1="20" x2="210" y2="160" stroke="#0a0" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)" />
-          <text x="215" y="100" font-size="13" fill="#0a0">L</text>
-          <!-- hl (液位) 標註 -->
-          <line x1="390" y1="160" x2="390" y2="110" stroke="#00a" stroke-width="2" marker-end="url(#arrow)" />
-          <text x="395" y="140" font-size="13" fill="#00a">hl</text>
-          <!-- Arrow marker defs -->
-          <defs>
-            <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto" markerUnits="strokeWidth">
-              <path d="M0,0 L8,4 L0,8 L2,4 Z" fill="#333" />
-            </marker>
-          </defs>
-        </svg>
-        <div style="font-size:13px; color:#555; margin-top:6px;">KO Drum 剖面示意圖（D：直徑，L：長度，hl：液位）</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center; margin: 30px 0 10px 0;">
-    <button onclick="window.print()" style="padding:12px 32px; font-size:1.1em; background:#0077aa; color:white; border:none; border-radius:6px; cursor:pointer;">列印/匯出PDF</button>
-  </div>
-
-  <script>
-    function calculate() {
-      // 獲取輸入值
-      const W = parseFloat(document.getElementById("W").value);
-      const Di = parseFloat(document.getElementById("Di").value);
-      const L = parseFloat(document.getElementById("L").value);
-      const hl = parseFloat(document.getElementById("hl").value);
-      const d_micron = parseFloat(document.getElementById("d").value);
-      const d = d_micron / 1e6; // 轉換為公尺
-      const rhoL = parseFloat(document.getElementById("rhoL").value);
-      const rhoV = parseFloat(document.getElementById("rhoV").value);
-      const mu = parseFloat(document.getElementById("mu").value);
-      const C = parseFloat(document.getElementById("C").value);
-      const g = 9.81;
-
-      // 計算終端速度 (顆粒沉降速度)
-      const Vt = Math.sqrt((4 * d * (rhoL - rhoV) * g) / (3 * C * rhoV));
-      // 計算截面積
-      const A = Math.PI * Math.pow(Di, 2) / 4;
-      // 計算氣體流速
-      const Vg = W / (3600 * rhoV * A);
-      // 計算停留時間
-      const t = L / Vg;
-      // 液體持液體積
-      const Vl = Math.PI * Math.pow(Di, 2) / 4 * hl;
-      // 液滴沉降時間 (API 521: Θ = hl / Vt)
-      const theta = hl / Vt;
-      // 所需KO Drum長度 (API 521: Lmin = t * Vg)
-      const Lmin = t * Vg;
-
-      // 更新主要結果
-      document.getElementById("result").innerHTML = `
-        ☁️ 終端速度 Vt = <strong>${Vt.toFixed(3)}</strong> m/s
-      `;
-      // 更新詳細結果
-      document.getElementById("detailed-result").innerHTML = `
-        <p>📊 詳細計算結果：</p>
-        <p>• 氣體流速 Vg = ${Vg.toFixed(3)} m/s</p>
-        <p>• 截面積 A = ${A.toFixed(3)} m²</p>
-        <p>• 停留時間 t = ${t.toFixed(3)} s</p>
-        <p>• 液滴直徑 = ${d_micron} μm</p>
-        <p>• 液體密度 = ${rhoL} kg/m³</p>
-        <p>• 氣體密度 = ${rhoV} kg/m³</p>
-      `;
-      // 更新 API 521 輸出區
-      document.getElementById("api-theta").innerText = isFinite(theta) ? theta.toFixed(2) : '-';
-      document.getElementById("api-uv").innerText = isFinite(Vg) ? Vg.toFixed(2) : '-';
-      document.getElementById("api-lmin").innerText = isFinite(Lmin) ? Lmin.toFixed(2) : '-';
-      document.getElementById("api-vl").innerText = isFinite(Vl) ? Vl.toFixed(2) : '-';
-      document.getElementById("api-uc").innerText = isFinite(Vt) ? Vt.toFixed(3) : '-';
-    }
-  </script>
 </body>
 </html>
