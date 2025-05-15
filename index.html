@@ -1,121 +1,166 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <title>卧式分液罐工艺计算（SH3009-2013）</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="container">
-    <h1>卧式分液罐工艺计算结果（SH3009-2013）</h1>
-    <form id="calcForm">
-        <!-- 1. 准备数据 -->
-        <h2>1. 准备数据：<span class="area-label input-area">INPUT AREA</span></h2>
-        <table>
-            <tr>
-                <td class="input-area">操作温度(℃)</td>
-                <td><input id="tempC" type="number" step="0.01" value="75.74" class="input-area"></td>
-                <td class="output-area">T 操作温度(K)</td>
-                <td><input id="tempK" type="number" step="0.01" readonly class="output-area"></td>
-                <td class="input-area">p操作压力(kPa,绝压)</td>
-                <td><input id="pressure" type="number" step="0.01" value="150" class="input-area"></td>
-                <td class="input-area">气体流量(t/h)</td>
-                <td><input id="gasFlow" type="number" step="0.01" value="65" class="input-area"></td>
-            </tr>
-            <tr>
-                <td class="input-area">气体分子量M</td>
-                <td><input id="gasM" type="number" step="0.01" value="54.1" class="input-area"></td>
-                <td class="input-area">u气体动力粘度(Cp)</td>
-                <td><input id="gasMu" type="number" step="0.000001" value="0.0124" class="input-area"></td>
-                <td class="input-area">d1液滴直径(m)</td>
-                <td><input id="dropD" type="number" step="0.00001" value="0.0006" class="input-area"></td>
-                <td class="input-area">ρl液滴密度(kg/m³)</td>
-                <td><input id="liquidRho" type="number" step="1" value="650" class="input-area"></td>
-            </tr>
-        </table>
-
-        <!-- 2. 计算液滴沉降速度 -->
-        <h2>2. 计算液滴沉降速度：</h2>
-        <table>
-            <tr>
-                <td class="output-area">ρv 气体密度(kg/m³)</td>
-                <td><input id="gasRho" type="number" readonly class="output-area"></td>
-                <td class="output-area">C(Re)²</td>
-                <td><input id="cre2" type="number" readonly class="output-area"></td>
-                <td class="input-area">查阻力系数C</td>
-                <td><input id="dragC" type="number" step="0.01" value="0.7" class="input-area"></td>
-                <td class="output-area">Uc 液滴沉降速度(m/s)</td>
-                <td><input id="uc" type="number" readonly class="output-area"></td>
-            </tr>
-        </table>
-
-        <!-- 3. 计算分液罐工艺尺寸 -->
-        <h2>3. 计算分液罐工艺尺寸：<span class="area-label output-area">OUTPUT AREA</span></h2>
-        <table>
-            <tr>
-                <td class="input-area">入口数</td>
-                <td><input id="inletN" type="number" value="1" min="1" class="input-area"></td>
-                <td class="output-area">补水量(ton/hr)</td>
-                <td><input id="waterAdd" type="number" readonly class="output-area"></td>
-                <td class="output-area">K0=1-2*D/H</td>
-                <td><input id="k0" type="number" readonly class="output-area"></td>
-            </tr>
-            <tr>
-                <td class="input-area">凝结液面高度(m)</td>
-                <td><input id="liqH" type="number" step="0.01" value="0.5" class="input-area"></td>
-                <td class="input-area">Dw设计值分液罐直径(m)</td>
-                <td><input id="drumD" type="number" step="0.01" value="1.5" class="input-area"></td>
-                <td class="output-area">ql凝结液量(m³)</td>
-                <td><input id="liqV" type="number" readonly class="output-area"></td>
-            </tr>
-            <tr>
-                <td class="output-area">封头K1/V1(m³)</td>
-                <td><input id="k1v1" type="number" readonly class="output-area"></td>
-                <td class="output-area">园筒K2/V2(m³)</td>
-                <td><input id="k2v2" type="number" readonly class="output-area"></td>
-                <td class="output-area">qv气体流量(Nm³/h)</td>
-                <td><input id="qv" type="number" readonly class="output-area"></td>
-            </tr>
-            <tr>
-                <td class="output-area">气体空间高度(m)</td>
-                <td><input id="gasH" type="number" readonly class="output-area"></td>
-                <td class="output-area">a液面高度/直径</td>
-                <td><input id="aRatio" type="number" readonly class="output-area"></td>
-                <td class="output-area">b液面截面积/罐总截面积</td>
-                <td><input id="bRatio" type="number" readonly class="output-area"></td>
-                <td class="output-area">φ系数</td>
-                <td><input id="phi" type="number" readonly class="output-area"></td>
-            </tr>
-            <tr>
-                <td class="output-area">Dsk计算值分液罐直径D(m)</td>
-                <td><input id="dsk" type="number" readonly class="output-area"></td>
-                <td class="output-area">进出口间距L(m)</td>
-                <td><input id="inletDist" type="number" readonly class="output-area"></td>
-                <td class="input-area">出入口管径(m)</td>
-                <td><input id="pipeD" type="number" step="0.01" value="0.6" class="input-area"></td>
-                <td class="input-area">端板长度(m)</td>
-                <td><input id="endLen" type="number" step="0.01" value="4.95" class="input-area"></td>
-                <td class="output-area">罐体总长(m)</td>
-                <td><input id="totalLen" type="number" readonly class="output-area"></td>
-            </tr>
-            <tr>
-                <td class="output-area">q(m³/s)</td>
-                <td><input id="qm3s" type="number" readonly class="output-area"></td>
-                <td class="output-area">Vc(m/s)(8.1.17-1)</td>
-                <td><input id="vc" type="number" readonly class="output-area"></td>
-                <td class="output-area">D(8.1.17-1)直径D(m)</td>
-                <td><input id="d8117" type="number" readonly class="output-area"></td>
-                <td class="output-area">D(8.1.16-1)直径D(m)</td>
-                <td><input id="d8116" type="number" readonly class="output-area"></td>
-            </tr>
-        </table>
-        <div class="btns">
-            <button type="button" onclick="calcAll()">计算</button>
-            <button type="reset">重置</button>
+<template>
+  <div class="container">
+    <!-- 输入区域 -->
+    <div class="input-section">
+      <h2>设计参数输入</h2>
+      
+      <!-- 分液罐参数 -->
+      <div class="param-group">
+        <h3>分液罐参数 (API 521)</h3>
+        <div class="input-row">
+          <label>最大气体流量 (m³/s):</label>
+          <input v-model.number="koParams.Qv" type="number" step="0.1">
         </div>
-    </form>
-</div>
-<script src="app.js"></script>
-</body>
-</html>
+        <div class="input-row">
+          <label>液体密度 (kg/m³):</label>
+          <input v-model.number="koParams.rhoL" type="number">
+        </div>
+        <div class="input-row">
+          <label>气体密度 (kg/m³):</label>
+          <input v-model.number="koParams.rhoV" type="number" step="0.1">
+        </div>
+      </div>
 
+      <!-- 水封罐参数 -->
+      <div class="param-group">
+        <h3>水封罐参数 (API 537)</h3>
+        <div class="input-row">
+          <label>系统最大压力 (barg):</label>
+          <input v-model.number="sealParams.Pmax" type="number" step="0.1">
+        </div>
+        <div class="input-row">
+          <label>密封液密度 (kg/m³):</label>
+          <input v-model.number="sealParams.rhoL" type="number">
+        </div>
+      </div>
+    </div>
+
+    <!-- 输出区域 -->
+    <div class="output-section">
+      <h2>计算结果输出</h2>
+      
+      <!-- 分液罐计算结果 -->
+      <div class="result-group">
+        <h3>分液罐设计结果</h3>
+        <div class="calculation-step">
+          <p>液滴沉降速度计算:
+            $$ U_v = 0.15 \sqrt{\frac{\rho_l - \rho_v}{\rho_v} \cdot g \cdot d_p} $$
+            代入值: 0.15 * √(({{koParams.rhoL}} - {{koParams.rhoV}})/{{koParams.rhoV}} * 9.81 * 150e-6)
+            = {{koResults.Uv.toFixed(3)}} m/s [5][6]
+          </p>
+        </div>
+        <div class="calculation-step">
+          <p>气相截面积:
+            $$ A_{cs} = \frac{Q_v}{U_v} = \frac{ {{koParams.Qv}} }{ {{koResults.Uv.toFixed(3)}} } 
+            = {{koResults.Acs.toFixed(3)}} m² [5]
+          </p>
+        </div>
+        <div class="final-result">
+          推荐直径: {{koResults.D.toFixed(2)}} m (圆整至 {{Math.ceil(koResults.D*10)/10}} m)
+        </div>
+      </div>
+
+      <!-- 水封罐计算结果 -->
+      <div class="result-group">
+        <h3>水封罐设计结果</h3>
+        <div class="calculation-step">
+          <p>理论密封高度:
+            $$ h_{seal} = \frac{P_{max} \times 100}{ \rho_l \cdot 9.81 } + 0.15 $$
+            = ({{sealParams.Pmax}}×100)/({{sealParams.rhoL}}×9.81) + 0.15
+            = {{sealResults.h.toFixed(2)}} m [6][9]
+          </p>
+        </div>
+        <div class="final-result">
+          最终密封高度: {{Math.ceil(sealResults.h*100)/100}} m
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      koParams: { Qv: 12.5, rhoL: 780, rhoV: 4.2 },
+      sealParams: { Pmax: 2.5, rhoL: 998 }
+    }
+  },
+  computed: {
+    koResults() {
+      const g = 9.81
+      const dp = 150e-6
+      const Uv = 0.15 * Math.sqrt(
+        ((this.koParams.rhoL - this.koParams.rhoV)/this.koParams.rhoV) * g * dp
+      )
+      const Acs = this.koParams.Qv / Uv
+      return {
+        Uv: Uv || 0,
+        Acs: Acs || 0,
+        D: Math.sqrt(4 * Acs / Math.PI) || 0
+      }
+    },
+    sealResults() {
+      return {
+        h: (this.sealParams.Pmax * 100) / (this.sealParams.rhoL * 9.81) + 0.15
+      }
+    }
+  }
+}
+</script>
+
+<style>
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 20px;
+}
+
+.input-section, .output-section {
+  background: #f5f7fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.param-group {
+  margin-bottom: 2rem;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+  margin: 10px 0;
+}
+
+input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.calculation-step {
+  background: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-left: 4px solid #409eff;
+  border-radius: 4px;
+}
+
+.final-result {
+  font-size: 1.2em;
+  color: #67C23A;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+h2, h3 {
+  color: #303133;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5em;
+}
+</style>
